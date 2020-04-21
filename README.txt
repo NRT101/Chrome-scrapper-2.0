@@ -1,4 +1,4 @@
-This is a revised Chrome favorites webscrapper using junit testing, hiberante, and maven. The code designed to be configurable via the parameters table and each class exlcuding main to be as independent of each as possible. Some of the configuration allows for changing user_agent, scrap timeout, email configuration, and json file source while the program is still operational.
+This is a revised Chrome favorites webscrapper using junit testing, hiberante, and maven. The code designed to be configurable via the parameters table and each class excluding main to be as independent of each as possible. Some of the configuration allows for changing user_agent, scrap timeout, email configuration, and json file source while the program is still operational.
 
 NOTE: most of the tests are going to have some of its test data removed for the sake of my privacy
 
