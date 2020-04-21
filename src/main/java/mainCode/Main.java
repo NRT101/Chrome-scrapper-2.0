@@ -35,21 +35,26 @@ public class Main {
 		List<Favorites> updatedToday = FavoritesDAO.whatUpdatedToday(favoriteList);
 		UpdatesTodayDAO.getUpdatesFromDatabase();
 		StringBuilder email = new StringBuilder();
+		UpdatesToday fromDB = UpdatesTodayDAO.getUpdates().get(0);
+		String dbList=fromDB.getList();
 		StringBuilder updatesTodayValue = new StringBuilder();
+		boolean newUpdate= false;
 		email.append("<table><thead><tr><th>Name</th><th>Last Updated</th></tr></thead><tbody>");
 
 		for (Favorites fav : updatedToday) {
-			updatesTodayValue.append(fav.getInternalId() + ";");
+			if(!dbList.contains(";"+fav.getInternalId().toString() +";")){
+					newUpdate=true;
+			}
+			updatesTodayValue.append(";"+fav.getInternalId() + ";");
 			email.append("<tr><td><a target=\"_blank\" href=\"" + fav.getURL() + "\">" + fav.getName() + "</a></td><td>"
 					+ fav.getUpdateString() + "</td></tr>");
 		}
 		email.append("</tbody></table>");
 		String updatesToday = updatesTodayValue.toString();
 		Date dateToday = new Date();
-		UpdatesToday fromDB = UpdatesTodayDAO.getUpdates().get(0);
 		// Checks that the update list is different than what is recorded and this
 		// update was after the last one
-		if (!updatesToday.equals(fromDB.getList()) && dateToday.after(fromDB.getTimeOfLastUpdate())) {
+		if (newUpdate && dateToday.after(fromDB.getTimeOfLastUpdate())) {
 			// update the database
 			fromDB.setList(updatesToday);
 			fromDB.setTimeOfLastUpdate(dateToday);
