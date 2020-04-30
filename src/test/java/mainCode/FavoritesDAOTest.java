@@ -3,6 +3,7 @@ package mainCode;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -175,10 +176,14 @@ class FavoritesDAOTest {
 		System.out.println("=====TESTING WhatUpdatedToday=====");
 		List<Favorites> list= new ArrayList<Favorites>();
 		Favorites fav = new Favorites();
-		fav.setTimeOfLastUpdate(new Date());
+		Date testDate= new Date();
+		testDate.setMinutes(testDate.getMinutes()+45);
+		fav.setTimeOfLastUpdate(testDate);
 		list.add(fav);
 		fav = new Favorites();
-		fav.setTimeOfLastUpdate(new Date());
+		testDate= new Date();
+		testDate.setMinutes(testDate.getMinutes()+25);
+		fav.setTimeOfLastUpdate(testDate);
 		list.add(fav);
 		Date yesterday= new Date();
 		yesterday.setDate(yesterday.getDay()-1);
@@ -197,6 +202,48 @@ class FavoritesDAOTest {
 			System.out.println(f.getTimeOfLastUpdate());
 		}
 		assertEquals(3,resultSize);
+	}
+	@SuppressWarnings("deprecation")
+	@Test
+	void testSort() {
+		System.out.println("=====TESTING testSort=====");
+		// creating test bed
+		List<Favorites> favList = new ArrayList<Favorites>();
+		Favorites testFav = new Favorites();
+		Date testDate= new Date();
+		testDate.setYear(testDate.getYear()-5);
+		testFav.setTimeOfLastUpdate(testDate);
+		favList.add(testFav);
+		testFav= new Favorites();
+		testDate= new Date();
+		testDate.setYear(testDate.getYear()+3);
+		testFav.setTimeOfLastUpdate(testDate);
+		favList.add(testFav);
+		testFav= new Favorites();
+		testDate= new Date();
+		testDate.setYear(testDate.getYear()-4);
+		testFav.setTimeOfLastUpdate(testDate);
+		favList.add(testFav);
+		testFav= new Favorites();
+		testDate= new Date();
+		testDate.setYear(testDate.getYear()-2);
+		testFav.setTimeOfLastUpdate(testDate);
+		favList.add(testFav);
+		Date expectedResult= new Date();
+		expectedResult.setYear(expectedResult.getYear()+3);
+		// print before, after run
+		System.out.println("Elements of array before sorting");
+		for(Favorites f: favList) {
+			System.out.println(f.getTimeOfLastUpdate());
+		}
+		Collections.sort(favList); // perform method to test on
+		System.out.println("Elements of array after sorting");
+
+		for(Favorites f: favList) {
+			System.out.println(f.getTimeOfLastUpdate());
+		}
+		Date result = favList.get(0).getTimeOfLastUpdate();
+		assertEquals(expectedResult.getYear(),result.getYear());
 	}
 	
 }

@@ -1,6 +1,7 @@
 package mainCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -141,6 +142,7 @@ public class FavoritesDAO {
 			if(f.getTimeOfLastUpdate().after(dateToday))
 				returnList.add(f);
 		}
+		Collections.sort(returnList); // sorts the end result
 		return returnList;
 	}
 }

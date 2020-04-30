@@ -15,7 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Favorites2")
-public class Favorites {
+public class Favorites  implements Comparable<Favorites>{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "InternalId", updatable = false, nullable = false)
@@ -128,6 +128,17 @@ public class Favorites {
 
 	public void setScrappedCreate(String scrappedCreate) {
 		this.scrappedCreate = scrappedCreate;
+	}
+
+	// Custom Comparable method to sort Favorites in descending order via TimeOfLastUpdate
+	@Override
+	public int compareTo(Favorites o) {
+		Date updateToCompare=o.getTimeOfLastUpdate();
+		if(updateToCompare.before(TimeOfLastUpdate))
+			return -1;
+		else if(updateToCompare.after(TimeOfLastUpdate))
+			return 1;
+		return 0;
 	}
 
 }

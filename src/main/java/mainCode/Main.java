@@ -20,8 +20,7 @@ import javax.mail.internet.MimeMessage;
 
 /*
  * Things to do:
- * Create a URL change functionality
- * email
+
  */
 
 public class Main {
