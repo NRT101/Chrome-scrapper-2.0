@@ -142,7 +142,8 @@ public class FavoritesDAO {
 			if(f.getTimeOfLastUpdate().after(dateToday))
 				returnList.add(f);
 		}
-		Collections.sort(returnList); // sorts the end result
+		Collections.sort(returnList, (favorite1, favorite2)->
+		favorite2.getTimeOfLastUpdate().compareTo(favorite1.getTimeOfLastUpdate())); // sorts the end result
 		return returnList;
 	}
 }
