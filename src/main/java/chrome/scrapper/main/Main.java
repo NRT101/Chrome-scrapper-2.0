@@ -1,4 +1,4 @@
-package mainCode;
+package chrome.scrapper.main;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,75 +32,78 @@ public class Main {
 	public static void sendEmail() {
 		// generates email setup and checks if email needs to be sent
 		List<Favorites> updatedToday = FavoritesDAO.whatUpdatedToday(favoriteList);
-		UpdatesTodayDAO.getUpdatesFromDatabase();
-		StringBuilder email = new StringBuilder();
-		UpdatesToday fromDB = UpdatesTodayDAO.getUpdates().get(0);
-		String dbList=fromDB.getList();
-		StringBuilder updatesTodayValue = new StringBuilder();
-		boolean newUpdate= false;
-		email.append("<table><thead><tr><th>Name</th><th>Last Updated</th></tr></thead><tbody>");
+		// perform checks only if there is an update today
+		if(updatedToday.size()>0) {
+			UpdatesTodayDAO.getUpdatesFromDatabase();
+			StringBuilder email = new StringBuilder();
+			UpdatesToday fromDB = UpdatesTodayDAO.getUpdates().get(0);
+			String dbList=fromDB.getList();
+			StringBuilder updatesTodayValue = new StringBuilder();
+			boolean newUpdate= false;
+			email.append("<table><thead><tr><th>Name</th><th>Last Updated</th></tr></thead><tbody>");
 
-		for (Favorites fav : updatedToday) {
-			if(!dbList.contains(";"+fav.getInternalId().toString() +";")){
+			for (Favorites fav : updatedToday) {
+				if(!dbList.contains(";"+fav.getInternalId().toString() +";")){
 					newUpdate=true;
+				}
+				updatesTodayValue.append(";"+fav.getInternalId() + ";");
+				email.append("<tr><td><a target=\"_blank\" href=\"" + fav.getURL() + "\">" + fav.getName() + "</a></td><td>"
+						+ fav.getUpdateString() + "</td></tr>");
 			}
-			updatesTodayValue.append(";"+fav.getInternalId() + ";");
-			email.append("<tr><td><a target=\"_blank\" href=\"" + fav.getURL() + "\">" + fav.getName() + "</a></td><td>"
-					+ fav.getUpdateString() + "</td></tr>");
-		}
-		email.append("</tbody></table>");
-		String updatesToday = updatesTodayValue.toString();
-		Date dateToday = new Date();
-		// Checks that the update list is different than what is recorded and this
-		// update was after the last one
-		if (newUpdate && dateToday.after(fromDB.getTimeOfLastUpdate())) {
-			// update the database
-			fromDB.setList(updatesToday);
-			fromDB.setTimeOfLastUpdate(dateToday);
-			List<UpdatesToday> updateList= new ArrayList<UpdatesToday>();
-			updateList.add(fromDB);
-			UpdatesTodayDAO.updateToday(updateList);
-			
-			// complete email setup and send the email
-			String htmlBody = "<strong>This is an HTML Message</strong>";
+			email.append("</tbody></table>");
+			String updatesToday = updatesTodayValue.toString();
+			Date dateToday = new Date();
+			// Checks that the update list is different than what is recorded and this
+			// update was after the last one
+			if (newUpdate && dateToday.after(fromDB.getTimeOfLastUpdate())) {
+				// update the database
+				fromDB.setList(updatesToday);
+				fromDB.setTimeOfLastUpdate(dateToday);
+				List<UpdatesToday> updateList= new ArrayList<UpdatesToday>();
+				updateList.add(fromDB);
+				UpdatesTodayDAO.updateToday(updateList);
 
-			final String username = ParametersTableDAO.returnValue("EMAIL_CLIENT_USERNAME", "WEBSITE_UPDATE");
-			final String password = ParametersTableDAO.returnValue("EMAIL_CLIENT_PASSWORD", "WEBSITE_UPDATE");
-			Properties prop = new Properties();
-			prop.put("mail.smtp.auth", ParametersTableDAO.returnValue("AUTHENTICATE", "WEBSITE_UPDATE"));
-			prop.put("mail.smtp.host", ParametersTableDAO.returnValue("EMAIL_HOST", "WEBSITE_UPDATE"));
-			prop.put("mail.smtp.port", ParametersTableDAO.returnValue("EMAIL_CLIENT_PORT", "WEBSITE_UPDATE"));
-			prop.put("mail.smtp.starttls.enable", ParametersTableDAO.returnValue("STARTTLSENABLE", "WEBSITE_UPDATE"));
-			try {
-				// Connects to server
-				Session session = Session.getDefaultInstance(prop, new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(username, password);
-					}
-				});
+				// complete email setup and send the email
+				String htmlBody = "<strong>This is an HTML Message</strong>";
 
-				Message message = new MimeMessage(session);
-				message.setFrom(new InternetAddress(username));
-				message.setRecipients(Message.RecipientType.TO,
-						InternetAddress.parse(ParametersTableDAO.returnValue("EMAIL_TARGET", "WEBSITE_UPDATE")));
-				message.setSubject(ParametersTableDAO.returnValue("EMAIL_SUBJECT", "WEBSITE_UPDATE"));
-				MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-				mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-				mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-				mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-				mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-				mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-				CommandMap.setDefaultCommandMap(mc);
-				message.setText(htmlBody);
-				message.setContent(email.toString(), "text/html");
-				Transport.send(message);
-				System.out.println("sent email");
-			} catch (MessagingException e) {
-				System.out.println("Email failed to send");
-				e.printStackTrace();
-			} catch (Exception e) {
-				System.out.println("All other email failures");
-				e.printStackTrace();
+				final String username = ParametersTableDAO.returnValue("EMAIL_CLIENT_USERNAME", "WEBSITE_UPDATE");
+				final String password = ParametersTableDAO.returnValue("EMAIL_CLIENT_PASSWORD", "WEBSITE_UPDATE");
+				Properties prop = new Properties();
+				prop.put("mail.smtp.auth", ParametersTableDAO.returnValue("AUTHENTICATE", "WEBSITE_UPDATE"));
+				prop.put("mail.smtp.host", ParametersTableDAO.returnValue("EMAIL_HOST", "WEBSITE_UPDATE"));
+				prop.put("mail.smtp.port", ParametersTableDAO.returnValue("EMAIL_CLIENT_PORT", "WEBSITE_UPDATE"));
+				prop.put("mail.smtp.starttls.enable", ParametersTableDAO.returnValue("STARTTLSENABLE", "WEBSITE_UPDATE"));
+				try {
+					// Connects to server
+					Session session = Session.getDefaultInstance(prop, new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+
+					Message message = new MimeMessage(session);
+					message.setFrom(new InternetAddress(username));
+					message.setRecipients(Message.RecipientType.TO,
+							InternetAddress.parse(ParametersTableDAO.returnValue("EMAIL_TARGET", "WEBSITE_UPDATE")));
+					message.setSubject(ParametersTableDAO.returnValue("EMAIL_SUBJECT", "WEBSITE_UPDATE"));
+					MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+					mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+					mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+					mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+					mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+					mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+					CommandMap.setDefaultCommandMap(mc);
+					message.setText(htmlBody);
+					message.setContent(email.toString(), "text/html");
+					Transport.send(message);
+					System.out.println("sent email");
+				} catch (MessagingException e) {
+					System.out.println("Email failed to send");
+					e.printStackTrace();
+				} catch (Exception e) {
+					System.out.println("All other email failures");
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -137,7 +140,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		// initial set up
-		java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE); // controls the logging level
+		java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF); // controls the logging level
 		ParametersTableDAO.getParametersFromDatabase();
 		String runFavorite = ParametersTableDAO.returnValue("FAVORITES", "MAIN");
 		int loopWait = 600000; // default 10 minutes(60*1000*10)
@@ -176,8 +179,8 @@ public class Main {
 			date = new Date();
 			System.out.println("End time: " + date.toString());
 			loopWait = Integer.parseInt(ParametersTableDAO.returnValue("LOOP_WAIT", "WEBSITE_UPDATE")); // gets how long
-																										// to wait in
-																										// milliseconds
+			// to wait in
+			// milliseconds
 			try {
 				Thread.sleep(loopWait);
 			} catch (InterruptedException e) {

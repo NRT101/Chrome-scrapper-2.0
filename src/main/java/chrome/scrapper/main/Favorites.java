@@ -1,6 +1,6 @@
-package mainCode;
+package chrome.scrapper.main;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,9 +29,9 @@ public class Favorites{
 	@Column(name="Directory")
 	private String Directory;
 	@Column(name="TimeOfLastUpdate")
-	private Date TimeOfLastUpdate=null;
+	private LocalDateTime TimeOfLastUpdate=null;
 	@Column(name="TimeOfEntry")
-	private Date TimeOfEntry=null;
+	private LocalDateTime TimeOfEntry=null;
 	@Column(name="UpdateString")
 	private String UpdateString=null;
 	@Column(name="SuccessFlag")
@@ -82,19 +82,19 @@ public class Favorites{
 		Directory = directory;
 	}
 
-	public Date getTimeOfLastUpdate() {
+	public LocalDateTime getTimeOfLastUpdate() {
 		return TimeOfLastUpdate;
 	}
 
-	public void setTimeOfLastUpdate(Date date) {
+	public void setTimeOfLastUpdate(LocalDateTime date) {
 		TimeOfLastUpdate = date;
 	}
 
-	public Date getTimeOfEntry() {
+	public LocalDateTime getTimeOfEntry() {
 		return TimeOfEntry;
 	}
 
-	public void setTimeOfEntry(Date timeOfEntry) {
+	public void setTimeOfEntry(LocalDateTime timeOfEntry) {
 		TimeOfEntry = timeOfEntry;
 	}
 

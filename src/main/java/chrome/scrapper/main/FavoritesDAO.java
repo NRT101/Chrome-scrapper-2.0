@@ -1,10 +1,10 @@
-package mainCode;
+package chrome.scrapper.main;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -130,20 +130,13 @@ public class FavoritesDAO {
 	}
 	
 	// This method searches the Favorites List and returns what was updated today
-	@SuppressWarnings("deprecation")
 	public static List<Favorites> whatUpdatedToday(List<Favorites> list){
 		List<Favorites> returnList=new ArrayList<Favorites>();
-		Date dateToday= new Date();
-		dateToday.setHours(0);
-		dateToday.setMinutes(0);
-		dateToday.setSeconds(0);
-		// goes through the favorites and gets the list of favorites that updated today
-		for(Favorites f: list) {
-			if(f.getTimeOfLastUpdate().after(dateToday))
-				returnList.add(f);
-		}
-		Collections.sort(returnList, (favorite1, favorite2)->
-		favorite2.getTimeOfLastUpdate().compareTo(favorite1.getTimeOfLastUpdate())); // sorts the end result
+		LocalDateTime dateToday=LocalDate.now().atStartOfDay().minusSeconds(1); // gets end of yesterday
+		// Stream filter on date
+		list.stream().filter(favNode->favNode.getTimeOfLastUpdate().isAfter(dateToday))
+		.sorted((f1,f2)->f2.getTimeOfLastUpdate().compareTo(f1.getTimeOfLastUpdate()))
+		.map(favNode->returnList.add(favNode)).collect(Collectors.toList());
 		return returnList;
 	}
 }

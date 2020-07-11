@@ -1,4 +1,4 @@
-package mainCode;
+package chrome.scrapper.main;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;

@@ -1,4 +1,4 @@
-package mainCode;
+package chrome.scrapper.main;
 
 import java.util.Date;
 

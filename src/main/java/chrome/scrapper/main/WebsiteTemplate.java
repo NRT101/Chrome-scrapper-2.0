@@ -1,4 +1,4 @@
-package mainCode;
+package chrome.scrapper.main;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

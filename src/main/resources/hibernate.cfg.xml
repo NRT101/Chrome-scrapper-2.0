@@ -14,9 +14,9 @@
         <property name="hibernate.jdbc.batch_size">30</property>
         <property name="hibernate.order_update">true</property>
         <property name="hibernate.batch_versioned_data">true</property>
-        <mapping class="mainCode.Favorites" />
-        <mapping class="mainCode.WebsiteTemplate" />
-        <mapping class="mainCode.ParametersTable" />
-        <mapping class="mainCode.UpdatesToday" />
+        <mapping class="chrome.scrapper.main.Favorites" />
+        <mapping class="chrome.scrapper.main.WebsiteTemplate" />
+        <mapping class="chrome.scrapper.main.ParametersTable" />
+        <mapping class="chrome.scrapper.main.UpdatesToday" />
     </session-factory>
 </hibernate-configuration>
